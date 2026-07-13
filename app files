@@ -1,0 +1,60 @@
+import streamlit as st
+import random
+
+st.title("🎯House Roaster")
+
+# 🔹 Static jobs
+jobs = ['bathroom','Toilet','kitchen','sweep_parlor','mop_parlor']
+
+st.write("### Available Jobs:")
+st.write(", ".join(jobs))
+st.write("➕ One person will be free for the weekend")
+
+# 🔹 Input names
+people_input = st.text_area("Enter 6 names (comma separated):")
+#names = Teejay, Pelumi, Dideolu, David, Wash, Dotun
+
+# 🔹 Session state
+if "assignments" not in st.session_state:
+    st.session_state.assignments = None
+
+if "free_person" not in st.session_state:
+    st.session_state.free_person = None
+
+
+# 🔹 Assignment function
+def assign_jobs():
+    people = [p.strip() for p in people_input.split(",") if p.strip()]
+
+    if len(people) != 6:
+        st.error("enter 6 names!")
+        return
+
+    random.shuffle(people)
+
+    # Assign jobs to first 5 people
+    assigned_people = people[:len(jobs)]
+    free_person = people[len(jobs)]  # 5th person is free
+
+    st.session_state.assignments = list(zip(assigned_people, jobs))
+    st.session_state.free_person = free_person
+
+
+# 🔹 Buttons
+col1, col2 = st.columns(2)
+
+with col1:
+    if st.button("Assign Jobs"):
+        assign_jobs()
+
+
+# 🔹 Display results
+if st.session_state.assignments:
+    st.subheader("Assignments:")
+    for person, job in st.session_state.assignments:
+        st.write(f"**{person}** → {job}")
+
+    st.success(f"🎉 {st.session_state.free_person} is free this weekend!")
+    
+
+streamlit
